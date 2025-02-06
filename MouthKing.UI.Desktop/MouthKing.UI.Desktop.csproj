@@ -1,12 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
+		<ApplicationIcon>Assets/logo.ico</ApplicationIcon>
 		<!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
     One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
 	
 	<PropertyGroup>
@@ -15,14 +17,37 @@
 		<BuiltInComInteropSupport>false</BuiltInComInteropSupport>
 		<TrimMode>link</TrimMode>
 	</PropertyGroup>
-	
 
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+		<None Remove=".gitignore" />
+		<None Update="Assets/app.icns" CopyToPublishDirectory="PreserveNewest" Condition="$(RuntimeIdentifier.StartsWith('osx'))">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
-		<PackageReference Include="PublishAotCompressed" Version="1.0.3" />
-	</ItemGroup>
+		<PackageReference Include="PublishAotCompressed" Version="1.0.3" Condition="!$(RuntimeIdentifier.StartsWith('osx'))" />
+		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" Condition="$(RuntimeIdentifier.StartsWith('osx'))" />
 
+	</ItemGroup>
+	<!-- Information for Dotnet.Bundle to Generate macOS app-->
+	<PropertyGroup>
+		<CFBundleName>$(AssemblyName)</CFBundleName>
+		<CFBundleDisplayName>$(AssemblyName)</CFBundleDisplayName>
+		<CFBundleIdentifier>com.$(AssemblyName)</CFBundleIdentifier>
+		<CFBundleVersion>1.0.0</CFBundleVersion>
+		<CFBundlePackageType>APPL</CFBundlePackageType>
+		<!--<CFBundleSignature>????</CFBundleSignature>-->
+		<CFBundleExecutable>$(AssemblyName)</CFBundleExecutable>
+		<CFBundleIconFile>Assets/app.icns</CFBundleIconFile>
+		<NSPrincipalClass>NSApplication</NSPrincipalClass>
+		<NSHighResolutionCapable>true</NSHighResolutionCapable>
+		<CFBundleShortVersionString>1.0</CFBundleShortVersionString>
+		<!-- Optional -->
+		<NSRequiresAquaSystemAppearance>true</NSRequiresAquaSystemAppearance>
+	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MouthKing.UI\MouthKing.UI.csproj" />
 	</ItemGroup>

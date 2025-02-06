@@ -21,6 +21,7 @@ public class MainViewModel : ViewModelBase
         _selectedLanguage = Languages.FirstOrDefault(x => x.Key == config.ToLanguage);
         _selectedGame = Games.FirstOrDefault(x => x.Key == config.Game);
         _selectedAiModel = AiModels.FirstOrDefault(x => x.Key == config.AiModel);
+        _isShort = config.IsShort;
     }
 
     private ObservableCollection<KeyValuePair<string, string>> _aiModels = new ObservableCollection<KeyValuePair<string, string>>
@@ -114,7 +115,7 @@ public class MainViewModel : ViewModelBase
         ConfigurationManager.SaveConfig();
     }
 
-    public string HotkeyPlaceholder = "按下想要设置的快捷键组合";
+    public string HotkeyPlaceholder = "按下新的快捷键组合";
 
     private string _currentHotkey;
 

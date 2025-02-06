@@ -7,66 +7,78 @@
              x:Class="MouthKing.UI.Views.MainView"
              x:DataType="vm:MainViewModel">
 	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
 
 	<ScrollViewer Margin="20">
-		<StackPanel Orientation="Horizontal">
-			<StackPanel.Styles>
-				<Style Selector="Label.h1" >
+		<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+			<Grid.Styles>
+				<Style Selector="Label.h1">
 					<Setter Property="FontSize" Value="24"/>
 					<Setter Property="FontWeight" Value="Bold"/>
 				</Style>
-				<Style Selector="Label.h2" >
+				<Style Selector="Label.h2">
 					<Setter Property="Margin" Value="0 6 0 0"/>
 				</Style>
-			</StackPanel.Styles>
-			<StackPanel>
-				<Label Classes="h1">设置</Label>
-				<Separator></Separator>
-				
-				<Label Classes="h2">选择翻译到什么语言:</Label>
-				<ComboBox ItemsSource="{Binding Languages}"
-						SelectedItem="{Binding SelectedLanguage}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Value}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-				<CheckBox >是否进行简短翻译</CheckBox>
-				<Label Classes="h2">选择游戏:</Label>
-				<ComboBox ItemsSource="{Binding Games}"
-						SelectedItem="{Binding SelectedGame}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Value}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
+			</Grid.Styles>
 
-				<Label Classes="h2">选择 AI 模型:</Label>
-				<ComboBox ItemsSource="{Binding AiModels}"
-						SelectedItem="{Binding SelectedAiModel}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Value}"/>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-				
-				<Label Classes="h2">快捷键设置:</Label>
-				<TextBox Name="HotkeyTextBox"
-						 Text="{Binding CurrentHotkey}"
-						 IsReadOnly="True"
-						 KeyDown="TextBox_KeyDown"
-						 GotFocus="TextBox_GotFocus"
-						 LostFocus="TextBox_LostFocus"
-			     />
+			<!-- 标题 -->
+			<Label Grid.Row="0" Classes="h1">设置</Label>
+			<Separator Grid.Row="1"/>
 
-			</StackPanel>
-		</StackPanel>
+			<!-- 语言选择 -->
+			<Label Grid.Row="2" Classes="h2">选择翻译到什么语言:</Label>
+			<ComboBox Grid.Row="3"
+                      HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding Languages}"
+                      SelectedItem="{Binding SelectedLanguage}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Value}"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<!-- 简短翻译选项 -->
+			<CheckBox Grid.Row="4"
+                      IsChecked="{Binding IsShort}">是否进行简短翻译</CheckBox>
+
+			<!-- 游戏选择 -->
+			<Label Grid.Row="5" Classes="h2">选择游戏:</Label>
+			<ComboBox Grid.Row="6"
+                      HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding Games}"
+                      SelectedItem="{Binding SelectedGame}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Value}"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<!-- AI模型选择 -->
+			<Label Grid.Row="7" Classes="h2">选择 AI 模型:</Label>
+			<ComboBox Grid.Row="8"
+                      HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding AiModels}"
+                      SelectedItem="{Binding SelectedAiModel}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Value}"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<!-- 快捷键设置 -->
+			<Label Grid.Row="9" Classes="h2">快捷键设置:</Label>
+			<TextBox Grid.Row="10"
+                     Name="HotkeyTextBox"
+                     HorizontalAlignment="Stretch"
+                     Text="{Binding CurrentHotkey}"
+                     IsReadOnly="True"
+                     KeyDown="TextBox_KeyDown"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus"/>
+		</Grid>
 	</ScrollViewer>
 </UserControl>
