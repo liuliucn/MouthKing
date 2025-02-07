@@ -9,7 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouthKing.UI.Desktop", "Mou
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{9FA3D6BD-1EC1-3BA5-80CB-CE02773A58D5}"
 	ProjectSection(SolutionItems) = preProject
+		appcast.xml = appcast.xml
 		Directory.Build.props = Directory.Build.props
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		publish.cmd = publish.cmd
+		publish.command = publish.command
+		publish.sh = publish.sh
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouthKing.Core", "MouthKing.Core\MouthKing.Core.csproj", "{5245F223-3A8B-4C88-95CC-C95F7B6BD943}"
