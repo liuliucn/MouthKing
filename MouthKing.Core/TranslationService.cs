@@ -30,15 +30,15 @@ public class TranslationService
         string scene,
         bool isShort)
     {
-        
-        var basePrompt = $@"<task>将游戏内文字从【中文】翻译到【东南亚英语】</task>
+
+        var basePrompt = $@"<task>将游戏内文字从【中文】翻译到【{to}】</task>
 
 <constraints>
 • 标点限制: ≤5个符号
 • 禁止换行
 • 禁止Markdown
 • 禁止特殊符号
-{(isShort? "• 翻译后的文字长度限制在60字符以内，简短有力":"")}
+{(isShort ? "• 翻译后的文字长度限制在60字符以内，简短有力" : "")}
 </constraints>
 
 <terms>
@@ -46,30 +46,25 @@ public class TranslationService
 • 维持缩写格式
 </terms>";
 
-        var modeDesc =   @"<toxic_style>
+        var modeDesc = $@"<translate_style>
 • 翻译用户原文后，还需进行2-3句扩写
 • 使用中国百度贴吧老哥的大脑进行思考
 • 用最为地狱笑话的心态来攻击对手
-• 根据目标翻译语言，在翻译的同时加入最为猛烈的地域歧视攻击
-• 使用双重隐喻
+{(to == "中文" ? "" : "• 根据目标翻译语言，在翻译的同时加入最为猛烈的地域歧视攻击")}
+• 毒舌翻译
 • 融入游戏场景梗
 • 符号化敏感词（如f*ck）
-</toxic_style>
+</translate_style>
 
 <references>
-• COD/堡垒之夜社区
 • 百度贴吧风格
 • 美式街头俚语
 </references>
-
-<rules>
-• 每条添加1个战术术语（noob/camping）
-• 使用FPS/MOBA黑话重构
-</rules>";
+";
 
         var sceneDesc = scene switch
         {
-            "dota2" => @"<context>
+            "Dota2" => @"<context>
 • DOTA2游戏环境
 • 使用英雄简称
 • 使用物品缩写
@@ -134,11 +129,11 @@ public class TranslationService
     {
         try
         {
- 
+
 
             var modelConfig = GetModelConfig(settings);
 
- 
+
 
             var systemPrompt = GetSystemPrompt(
                 settings.TranslationFrom,
@@ -155,7 +150,7 @@ public class TranslationService
                 "deepseek-ai/DeepSeek-R1" => new()
                 {
                     model = modelConfig.ModelName,
-                    messages =  
+                    messages =
                     [
                         new() { role = "system", content = systemPrompt },
                         new() { role = "user", content = original }

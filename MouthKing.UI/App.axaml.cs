@@ -82,7 +82,7 @@ public partial class App : Application
     }
 
     private static readonly Dictionary<KeyCode, string> keyMappings = new()
-        { 
+        {
             { KeyCode.VcMinus, "-" },
             { KeyCode.VcEquals, "=" },
             { KeyCode.VcComma, "," },
@@ -94,7 +94,7 @@ public partial class App : Application
             { KeyCode.VcBackslash, "\\" },
             { KeyCode.VcCloseBracket, "]" },
             { KeyCode.VcQuote, "'" },
-             
+
         };
 
     private async void OnKeyReleased(object? sender, KeyboardHookEventArgs e)
@@ -154,8 +154,8 @@ public partial class App : Application
 
             var settings = new TranslationService.TranslationSettings
             {
-                TranslationFrom = "zh",
-                TranslationTo = ConfigurationManager.Config.ToLanguage,
+                TranslationFrom = "中文",
+                TranslationTo = ConfigurationManager.Config.IsNoTranslate ? "中文" : ConfigurationManager.Config.ToLanguage,
                 GameScene = ConfigurationManager.Config.Game,
                 IsShort = ConfigurationManager.Config.IsShort,
                 ModelType = ConfigurationManager.Config.AiModel

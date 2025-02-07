@@ -11,7 +11,7 @@
 	</Design.DataContext>
 
 	<ScrollViewer Margin="20">
-		<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+		<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" >
 			<Grid.Styles>
 				<Style Selector="Label.h1">
 					<Setter Property="FontSize" Value="24"/>
@@ -20,10 +20,26 @@
 				<Style Selector="Label.h2">
 					<Setter Property="Margin" Value="0 6 0 0"/>
 				</Style>
+				<Style Selector="Label.subtitle">
+					<Setter Property="FontSize" Value="12"/>
+					<Setter Property="Foreground" Value="#cccccc"/>
+				</Style>
 			</Grid.Styles>
 
-			<!-- 标题 -->
-			<Label Grid.Row="0" Classes="h1">设置</Label>
+			<!-- 标题行：Logo + 文字 -->
+			<StackPanel Grid.Row="0" 
+						Orientation="Horizontal" 
+						Spacing="10" 
+						VerticalAlignment="Center">
+				<Image Source="/Assets/logo.ico" 
+					   Width="32" 
+					   Height="32"/>
+				<Label Classes="h1">嘴强</Label>
+				<Label Classes="subtitle"
+               VerticalAlignment="Bottom"
+               Margin="5 0 0 3">手速不够，嘴速来凑</Label>
+			</StackPanel>
+
 			<Separator Grid.Row="1"/>
 
 			<!-- 语言选择 -->
@@ -31,7 +47,8 @@
 			<ComboBox Grid.Row="3"
                       HorizontalAlignment="Stretch"
                       ItemsSource="{Binding Languages}"
-                      SelectedItem="{Binding SelectedLanguage}">
+                      SelectedItem="{Binding SelectedLanguage}"
+					  IsEnabled="{Binding !IsNoTranslate}">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding Value}"/>
@@ -41,11 +58,14 @@
 
 			<!-- 简短翻译选项 -->
 			<CheckBox Grid.Row="4"
-                      IsChecked="{Binding IsShort}">是否进行简短翻译</CheckBox>
-
+                      IsChecked="{Binding IsShort}" IsEnabled="{Binding !IsNoTranslate}">是否进行简短翻译</CheckBox>
+			<!-- 简短翻译选项 -->
+			<CheckBox Grid.Row="5"
+                      IsChecked="{Binding IsNoTranslate}">不翻译而是中文扩写</CheckBox>
+			
 			<!-- 游戏选择 -->
-			<Label Grid.Row="5" Classes="h2">选择游戏:</Label>
-			<ComboBox Grid.Row="6"
+			<Label Grid.Row="6" Classes="h2">选择游戏:</Label>
+			<ComboBox Grid.Row="7"
                       HorizontalAlignment="Stretch"
                       ItemsSource="{Binding Games}"
                       SelectedItem="{Binding SelectedGame}">
@@ -57,8 +77,8 @@
 			</ComboBox>
 
 			<!-- AI模型选择 -->
-			<Label Grid.Row="7" Classes="h2">选择 AI 模型:</Label>
-			<ComboBox Grid.Row="8"
+			<Label Grid.Row="8" Classes="h2">选择 AI 模型:</Label>
+			<ComboBox Grid.Row="9"
                       HorizontalAlignment="Stretch"
                       ItemsSource="{Binding AiModels}"
                       SelectedItem="{Binding SelectedAiModel}">
@@ -70,8 +90,8 @@
 			</ComboBox>
 
 			<!-- 快捷键设置 -->
-			<Label Grid.Row="9" Classes="h2">快捷键设置:</Label>
-			<TextBox Grid.Row="10"
+			<Label Grid.Row="10" Classes="h2">快捷键设置:</Label>
+			<TextBox Grid.Row="11"
                      Name="HotkeyTextBox"
                      HorizontalAlignment="Stretch"
                      Text="{Binding CurrentHotkey}"

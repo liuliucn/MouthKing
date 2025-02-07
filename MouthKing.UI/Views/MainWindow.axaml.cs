@@ -14,7 +14,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        var appcastUrl = "https://gitee.com/tsdyy/mouth-king/raw/files/appcast.xml";
+        var appcastUrl = "https://gitee.com/tsdyy/mouth-king/raw/files/appcast-windows.xml";
         if (OperatingSystem.IsMacOS())
             appcastUrl = "https://gitee.com/tsdyy/mouth-king/raw/files/appcast-macos.xml";
         else if (OperatingSystem.IsLinux())

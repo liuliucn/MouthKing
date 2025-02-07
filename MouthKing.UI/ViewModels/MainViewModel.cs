@@ -22,6 +22,7 @@ public class MainViewModel : ViewModelBase
         _selectedGame = Games.FirstOrDefault(x => x.Key == config.Game);
         _selectedAiModel = AiModels.FirstOrDefault(x => x.Key == config.AiModel);
         _isShort = config.IsShort;
+        _isNoTranslate = config.IsNoTranslate;
     }
 
     private ObservableCollection<KeyValuePair<string, string>> _aiModels = new ObservableCollection<KeyValuePair<string, string>>
@@ -55,9 +56,9 @@ public class MainViewModel : ViewModelBase
 
     private ObservableCollection<KeyValuePair<string, string>> _languages = new ObservableCollection<KeyValuePair<string, string>>
     {
-        new KeyValuePair<string, string>("en", "英语"),
-        new KeyValuePair<string, string>("en-SEA", "东南亚英语"),
-        new KeyValuePair<string, string>("zh", "中文"),
+        new KeyValuePair<string, string>("英语", "英语"),
+        new KeyValuePair<string, string>("东南亚英语", "东南亚英语"),
+        new KeyValuePair<string, string>("中文", "中文"),
     };
     private KeyValuePair<string, string> _selectedLanguage;
     public ObservableCollection<KeyValuePair<string, string>> Languages
@@ -86,8 +87,8 @@ public class MainViewModel : ViewModelBase
     private ObservableCollection<KeyValuePair<string, string>> _games = new ObservableCollection<KeyValuePair<string, string>>
     {
         new KeyValuePair<string, string>("Dota2", "Dota2"),
-        new KeyValuePair<string, string>("英雄联盟", "英雄联盟"),
-        new KeyValuePair<string, string>("CS:GO", "CS:GO"),
+        new KeyValuePair<string, string>("lol", "英雄联盟"),
+        new KeyValuePair<string, string>("csgo", "CS:GO"),
         new KeyValuePair<string, string>("World of warcraft", "WoW"),
 
     };
@@ -140,6 +141,19 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _isShort, value);
             ConfigurationManager.Config.IsShort = value;
+            ConfigurationManager.SaveConfig();
+        }
+    }
+
+    private bool _isNoTranslate;
+
+    public bool IsNoTranslate
+    {
+        get => _isNoTranslate;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _isNoTranslate, value);
+            ConfigurationManager.Config.IsNoTranslate = value;
             ConfigurationManager.SaveConfig();
         }
     }
