@@ -18,79 +18,9 @@ jobs:
         target-url: "https://gitee.com/tsdyy/mouth-king.git"
         target-username: ${{ secrets.GITLAB_USERNAME }}
         target-token: ${{ secrets.GITLAB_TOKEN }}
-  build-on-linux:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup NativeAOT pre-requisites
-      run: sudo apt-get install clang zlib1g-dev libkrb5-dev --assume-yes
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 9.0.x
-    - name: Publish
-      run: |
-        sudo chmod +x ./publish.sh
-        ./publish.sh ${{github.ref_name}}
-    - uses: actions/upload-artifact@v4.6.0
-      with:
-        name: Linux-Artifact-${{github.ref_name}}
-        path: |
-          ./MouthKing.UI.Desktop/bin/Release/net9.0/linux-x64/publish/*.bin
-          ./MouthKing.UI.Desktop/bin/Release/net9.0/linux-x64/publish/*.so
-  build-on-windows:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 9.0.x
-    - name: Publish
-      run: ./publish.cmd ${{github.ref_name}}
-    - uses: actions/upload-artifact@v4.6.0
-      with:
-        name: Windows-Artifact-${{github.ref_name}}
-        path: |
-          .\MouthKing.UI.Desktop\bin\Release\net9.0\win-x64\publish\*.exe
-          .\MouthKing.UI.Desktop\bin\Release\net9.0\win-x64\publish\*.dll
-  build-on-macos:
-    runs-on: macos-13
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 9.0.x
-    - name: Publish
-      run: |
-        sudo chmod +x ./publish.command
-        ./publish.command ${{github.ref_name}}
-        mv ./installer_background.png ./MouthKing.UI.Desktop/bin/Release/net9.0/osx-x64/publish/
-        cd ./MouthKing.UI.Desktop/bin/Release/net9.0/osx-x64/publish
-        mkdir app_folder
-        mv ./MouthKing.UI.Desktop.app ./app_folder/
-        git clone https://github.com/create-dmg/create-dmg.git
-        ./create-dmg/create-dmg \
-          --volname "MouthKing.UI.Desktop Installer" \
-          --background "installer_background.png" \
-          --window-pos 200 120 \
-          --window-size 800 400 \
-          --icon-size 100 \
-          --icon "MouthKing.UI.Desktop.app" 200 190 \
-          --hide-extension "MouthKing.UI.Desktop.app" \
-          --app-drop-link 600 185 \
-          "MouthKing.UI.Desktop-Installer.dmg" \
-          "app_folder/"
-        zip -r -9 macOS-Artifact.zip *.dmg
-    - uses: actions/upload-artifact@v4.6.0
-      with:
-        name: macOS-Artifact-${{github.ref_name}}
-        path: ./MouthKing.UI.Desktop/bin/Release/net9.0/osx-x64/publish/macOS-Artifact.zip
 
   download-artiface:
     runs-on: ubuntu-latest
-    needs: [build-on-windows]
     steps:
 
     - name: create gitlab release
@@ -100,7 +30,7 @@ jobs:
              -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":"${{github.ref_name}}","name":"${{github.ref_name}}","body":"${{github.ref_name}}","target_commitish":"master"}')
         echo "::set-output name=json::json"
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v4.1.8z
+    - uses: actions/download-artifact@v4.1.8
     - name: upload artifacts to gitlab
       run: |
         echo "test"
