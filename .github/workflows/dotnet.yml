@@ -97,11 +97,13 @@ jobs:
     - name: create gitlab release
       id: create_release
       run: |
-        curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases' \
-             -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":"${{github.ref_name}}","name":"${{github.ref_name}}","body":"${{github.ref_name}}","target_commitish":"master"}'
+        json=(curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases' \
+             -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":"${{github.ref_name}}","name":"${{github.ref_name}}","body":"${{github.ref_name}}","target_commitish":"master"}')
+        echo "::set-output name=json::json"
     - name: upload artifacts to gitlab
       run: |
-        release_id=${{fromJson(steps.create_release.outputs).id}}
+        echo "${{fromJson(steps.create_release.outputs.json).id}}"
+        release_id=${{fromJson(steps.create_release.outputs.json).id}}
         echo $release_id
         
         
