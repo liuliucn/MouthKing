@@ -9,6 +9,18 @@ env:
   tag: $GITHUB_REF_NAME
 
 jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Git Repo Sync
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: wangchucheng/git-repo-sync@v0.1.0
+      with:
+        target-url: https://gitee.com/tsdyy/mouth-king.git
+        target-username: ${{ secrets.GITLAB_USERNAME }}
+        target-token: ${{ secrets.GITLAB_TOKEN }}
   build-on-linux:
     runs-on: ubuntu-latest
     steps:
@@ -78,4 +90,48 @@ jobs:
       with:
         name: macOS-Artifact-${{github.ref_name}}
         path: ./MouthKing.UI.Desktop/bin/Release/net9.0/osx-x64/publish/macOS-Artifact.zip
-   
+
+  download-artiface:
+    runs-on: ubuntu-latest
+    needs: [build-on-linux, build-on-windows, build-on-macos]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v3
+    - name: create gitlab release
+      id: create_release
+      run: |
+        curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases' 
+            -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":"${{github.ref_name}}","name":"${{github.ref_name}}","body":"${{github.ref_name}}","target_commitish":"master"}'
+    - name: upload artifacts to gitlab
+      run: |
+        release_id=${{fromJson(steps.create_release.outputs).id}}
+        echo $release_id
+        url_windows=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Windows-Artifact.zip
+        url_linux=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Linux-Artifact.zip
+        url_macos=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/macOS-Artifact.zip
+        cd ./Windows-Artifact-${{github.ref_name}}/
+        zip Windows-Artifact.zip * -r
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file Windows-Artifact.zip $url_windows
+        cd ..
+        cd ./Linux-Artifact-${{github.ref_name}}/
+        zip Linux-Artifact.zip * -r
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file Linux-Artifact.zip $url_linux
+        cd ..
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file macOS-Artifact-${{github.ref_name}}/macOS-Artifact.zip $url_macos
+        cat appcast.xml
+        cp appcast.xml appcast-windows.xml
+        sed -i "s|url_placeholder|$url_windows|g" appcast-windows.xml
+        sed -i "s|os_placeholder|windows|g" appcast-windows.xml
+        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-windows.xml
+        cp appcast.xml appcast-linux.xml
+        sed -i "s|url_placeholder|$url_linux|g" appcast-linux.xml
+        sed -i "s|os_placeholder|linux|g" appcast-linux.xml
+        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-linux.xml
+        cp appcast.xml appcast-macos.xml
+        sed -i "s|url_placeholder|$url_macos|g" appcast-macos.xml
+        sed -i "s|os_placeholder|macos|g" appcast-macos.xml
+        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-macos.xml
+        cat appcast-windows.xml
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-windows.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-windows.xml
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-linux.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-linux.xml
+        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-macos.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-macos.xml
