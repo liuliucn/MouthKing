@@ -103,36 +103,5 @@ jobs:
       run: |
         release_id=${{fromJson(steps.create_release.outputs).id}}
         echo $release_id
-        release_url=https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases/$release_id/attach_files
-        url_windows=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Windows-Artifact.zip
-        url_linux=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Linux-Artifact.zip
-        url_macos=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/macOS-Artifact.zip
-        ls
-        cd ./Windows-Artifact-${{github.ref_name}}/
-        zip Windows-Artifact.zip * -r
-        cd ..
-        cd ./Linux-Artifact-${{github.ref_name}}/
-        zip Linux-Artifact.zip * -r
-        cd ..
-        curl -X POST \
-          -F "access_token=${{ secrets.GITLAB_API_TOKEN }}" \
-          -F "release_id=$release_id" \
-          -F "file=@macOS-Artifact-${{github.ref_name}}/macOS-Artifact.zip" \
-          -F "file=@Windows-Artifact-${{github.ref_name}}/Windows-Artifact.zip" \
-          -F "file=@Linux-Artifact-${{github.ref_name}}/Linux-Artifact.zip" \
-          $release_url
-        cat appcast.xml
-        cp appcast.xml appcast-windows.xml
-        sed -i "s|url_placeholder|$url_windows|g" appcast-windows.xml
-        sed -i "s|os_placeholder|windows|g" appcast-windows.xml
-        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-windows.xml
-        cp appcast.xml appcast-linux.xml
-        sed -i "s|url_placeholder|$url_linux|g" appcast-linux.xml
-        sed -i "s|os_placeholder|linux|g" appcast-linux.xml
-        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-linux.xml
-        cp appcast.xml appcast-macos.xml
-        sed -i "s|url_placeholder|$url_macos|g" appcast-macos.xml
-        sed -i "s|os_placeholder|macos|g" appcast-macos.xml
-        sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-macos.xml
-        cat appcast-windows.xml
+        
         
