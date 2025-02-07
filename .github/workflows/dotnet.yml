@@ -23,7 +23,7 @@ jobs:
       run: |
         sudo chmod +x ./publish.sh
         ./publish.sh ${{github.ref_name}}
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4.6.0
       with:
         name: Linux-Artifact-${{github.ref_name}}
         path: |
@@ -39,7 +39,7 @@ jobs:
         dotnet-version: 9.0.x
     - name: Publish
       run: ./publish.cmd ${{github.ref_name}}
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4.6.0
       with:
         name: Windows-Artifact-${{github.ref_name}}
         path: |
@@ -74,7 +74,7 @@ jobs:
           "MouthKing.UI.Desktop-Installer.dmg" \
           "app_folder/"
         zip -r -9 macOS-Artifact.zip *.dmg
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4.6.0
       with:
         name: macOS-Artifact-${{github.ref_name}}
         path: ./MouthKing.UI.Desktop/bin/Release/net9.0/osx-x64/publish/macOS-Artifact.zip
