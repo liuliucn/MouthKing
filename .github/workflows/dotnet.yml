@@ -93,7 +93,7 @@ jobs:
     needs: [build-on-windows]
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.8
     - name: create gitlab release
       id: create_release
       run: |
@@ -103,18 +103,24 @@ jobs:
       run: |
         release_id=${{fromJson(steps.create_release.outputs).id}}
         echo $release_id
+        release_url=https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases/${{release_id}}/attach_files
         url_windows=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Windows-Artifact.zip
         url_linux=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/Linux-Artifact.zip
         url_macos=${{vars.GITLAB_URL}}/packages/generic/release/${{github.ref_name}}/macOS-Artifact.zip
+        ls
         cd ./Windows-Artifact-${{github.ref_name}}/
         zip Windows-Artifact.zip * -r
-        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file Windows-Artifact.zip $url_windows
         cd ..
         cd ./Linux-Artifact-${{github.ref_name}}/
         zip Linux-Artifact.zip * -r
-        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file Linux-Artifact.zip $url_linux
         cd ..
-        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file macOS-Artifact-${{github.ref_name}}/macOS-Artifact.zip $url_macos
+        curl -X POST \
+          -F "access_token=${{ secrets.GITLAB_API_TOKEN }}" \
+          -F "release_id=${{release_id}}" \
+          -F "file=@macOS-Artifact-${{github.ref_name}}/macOS-Artifact.zip" \
+          -F "file=@Windows-Artifact-${{github.ref_name}}/Windows-Artifact.zip" \
+          -F "file=@Linux-Artifact-${{github.ref_name}}/Linux-Artifact.zip" \
+          $release_url
         cat appcast.xml
         cp appcast.xml appcast-windows.xml
         sed -i "s|url_placeholder|$url_windows|g" appcast-windows.xml
@@ -129,6 +135,4 @@ jobs:
         sed -i "s|os_placeholder|macos|g" appcast-macos.xml
         sed -i "s|version_placeholder|${{github.ref_name}}|g" appcast-macos.xml
         cat appcast-windows.xml
-        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-windows.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-windows.xml
-        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-linux.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-linux.xml
-        curl -sS --header "Private-Token: ${{ secrets.GITLAB_TOKEN }}" --upload-file appcast-macos.xml ${{vars.GITLAB_URL}}/packages/generic/release/xml/appcast-macos.xml
+        
