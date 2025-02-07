@@ -100,8 +100,9 @@ jobs:
              -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":"${{github.ref_name}}","name":"${{github.ref_name}}","body":"${{github.ref_name}}","target_commitish":"master"}')
         echo "::set-output name=json::json"
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v4.1.8
+    - uses: actions/download-artifact@v4.1.8z
     - name: upload artifacts to gitlab
       run: |
         echo "test"
+        echo "${{fromJson(steps.create_release.outputs.json).id}}"
         
