@@ -28,7 +28,8 @@ jobs:
       run: |
         json=(curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases' \
              -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":"${{github.ref_name}}","name":"${{github.ref_name}}","body":"${{github.ref_name}}","target_commitish":"master"}')
-        echo "::set-output name=json::json"
+        echo "$json"
+        echo "::set-output name=json::$json"
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@v4.1.8
     - name: upload artifacts to gitlab
