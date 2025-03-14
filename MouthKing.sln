@@ -10,8 +10,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{9FA3D6BD-1EC1-3BA5-80CB-CE02773A58D5}"
 	ProjectSection(SolutionItems) = preProject
 		appcast.xml = appcast.xml
+		build.bat = build.bat
+		build.sh = build.sh
 		Directory.Build.props = Directory.Build.props
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		main.yml = main.yml
 		publish.cmd = publish.cmd
 		publish.command = publish.command
 		publish.sh = publish.sh

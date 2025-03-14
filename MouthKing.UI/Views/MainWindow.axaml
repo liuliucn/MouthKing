@@ -10,5 +10,8 @@
         x:Class="MouthKing.UI.Views.MainWindow"
         Icon="/Assets/logo.ico"
         Title="嘴强">
-        <views:MainView/>
+	<StackPanel>
+		<views:MainView/>
+		<views:UpdateAvailableView/>
+	</StackPanel>
 </Window>

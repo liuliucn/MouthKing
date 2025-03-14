@@ -1,7 +1,7 @@
 ﻿using System;
-
 using Avalonia;
 using Avalonia.ReactiveUI;
+using Velopack;
 
 namespace MouthKing.UI.Desktop;
 
@@ -11,8 +11,15 @@ class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        VelopackApp
+            .Build()
+            .WithFirstRun((v) => { /* Your first run code here */ })
+            .Run();
+
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()

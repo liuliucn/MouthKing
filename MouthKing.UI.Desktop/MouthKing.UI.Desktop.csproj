@@ -9,6 +9,7 @@
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+		<Version>0.1</Version>
 	</PropertyGroup>
 	
 	<PropertyGroup>
@@ -30,6 +31,7 @@
 		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
 		<PackageReference Include="PublishAotCompressed" Version="1.0.3" Condition="!$(RuntimeIdentifier.StartsWith('osx'))" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" Condition="$(RuntimeIdentifier.StartsWith('osx'))" />
+		<PackageReference Include="Velopack" Version="0.0.1053" />
 
 	</ItemGroup>
 	<!-- Information for Dotnet.Bundle to Generate macOS app-->
