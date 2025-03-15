@@ -124,7 +124,7 @@ jobs:
 
   upload-artiface:
     runs-on: ubuntu-latest
-    needs: [deploy-win,deploy-linux,deploy-macos-intel,deploy-macos-m1]
+    needs: [deploy-win,deploy-linux,deploy-macos-x64,deploy-macos-arm64]
     steps:
     - name: create gitlab release
       id: create_release
