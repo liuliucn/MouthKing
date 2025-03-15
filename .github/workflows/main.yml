@@ -51,7 +51,7 @@ jobs:
           dotnet tool install -g vpk
           vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }}
           vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish
-          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c linux --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
   deploy-macos-intel:
     runs-on: macos-13
     steps:
@@ -70,9 +70,9 @@ jobs:
      - name: Create Velopack Release
        run: |
           dotnet tool install -g vpk
-          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }}
-          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish
-          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-intel --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
+          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c macos-x64
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-x64
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-x64 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
   deploy-macos-m1:
     runs-on: macos-14
     steps:
@@ -91,6 +91,6 @@ jobs:
      - name: Create Velopack Release
        run: |
           dotnet tool install -g vpk
-          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }}
-          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish
-          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-m1 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
+          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c macos-arm64
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-arm64
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-arm64 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
