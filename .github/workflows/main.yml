@@ -122,6 +122,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy-win,deploy-linux,deploy-macos-x64,deploy-macos-arm64]
     steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    - name: Get Version from Project File
+      id: get-version
+      shell: bash
+      run: echo "version=$(grep -oE '<Version>[^<]+' MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj | sed 's/<Version>//')" >> $GITHUB_OUTPUT
     - name: create gitlab release
       id: create_release
       run: |
