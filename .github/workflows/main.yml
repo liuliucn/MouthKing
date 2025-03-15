@@ -55,8 +55,7 @@ jobs:
      - name: Create Velopack Release
        run: |
           dotnet tool install -g vpk
-          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c linux 
-          vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish -c linux 
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish -c linux --delta None
           vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c linux --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
      - name: Upload Artifacts
        uses: actions/upload-artifact@v4
@@ -83,8 +82,7 @@ jobs:
      - name: Create Velopack Release
        run: |
           dotnet tool install -g vpk
-          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c macos-x64
-          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-x64
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-x64 --delta None
           vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-x64 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
      - name: Upload Artifacts
        uses: actions/upload-artifact@v4
@@ -111,8 +109,7 @@ jobs:
      - name: Create Velopack Release
        run: |
           dotnet tool install -g vpk
-          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c macos-arm64
-          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-arm64
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-arm64 --delta None
           vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-arm64 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
      - name: Upload Artifacts
        uses: actions/upload-artifact@v4
@@ -138,7 +135,7 @@ jobs:
       run: |
         {
           echo 'FILELIST<<EOF'
-          find . -name '*.*' -print 
+          find . -type f -not -name 'assets*' -print 
           echo EOF
         } >> "$GITHUB_ENV"
     - name: upload artifacts to gitlab
@@ -148,6 +145,11 @@ jobs:
         release_url="https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases/$release_id/attach_files"
         ls
         for i in $FILELIST; do
-          echo "Do something with file ${i}"
+          curl -X POST \
+          -F "access_token=${{ secrets.GITLAB_API_TOKEN }}" \
+          -F "release_id=$release_id" \
+          -F "file=@${i}" \
+          $release_url
+          echo "upload ${i}"
         done
         
