@@ -132,7 +132,7 @@ jobs:
       id: create_release
       run: |
         json=$(curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases' \
-             -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":" ${{ steps.get-version.outputs.version }}","name":" ${{ steps.get-version.outputs.version }}","body":"","target_commitish":"master"}')
+             -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":"${{ steps.get-version.outputs.version }}","name":"${{ steps.get-version.outputs.version }}","body":"","target_commitish":"master"}')
         echo "$json"
         echo "::set-output name=json::$json"
     - uses: actions/download-artifact@v4.1.8
