@@ -26,8 +26,7 @@ jobs:
      - name: Create Velopack Release
        run: |
           dotnet tool install -g vpk
-          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c win 
-          vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish -c win 
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish -c win --delta None
           vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c win  --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
      - name: Upload Artifacts
        uses: actions/upload-artifact@v4
