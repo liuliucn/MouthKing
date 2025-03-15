@@ -29,6 +29,13 @@ jobs:
           vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c win 
           vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish -c win 
           vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c win  --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
+     - name: Upload Artifacts
+       uses: actions/upload-artifact@v4
+       with:
+           name: win-build
+           path: ./Releases
+           retention-days: 1
+
   deploy-linux:
     runs-on: ubuntu-latest
     steps:
@@ -52,7 +59,14 @@ jobs:
           vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c linux 
           vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish -c linux 
           vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c linux --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
-  deploy-macos-intel:
+     - name: Upload Artifacts
+       uses: actions/upload-artifact@v4
+       with:
+           name: linux-build
+           path: ./Releases
+           retention-days: 1
+
+  deploy-macos-x64:
     runs-on: macos-13
     steps:
      - name: Checkout Repository
@@ -73,7 +87,14 @@ jobs:
           vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c macos-x64
           vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-x64
           vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-x64 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
-  deploy-macos-m1:
+     - name: Upload Artifacts
+       uses: actions/upload-artifact@v4
+       with:
+           name: macos-x64-build
+           path: ./Releases
+           retention-days: 1
+
+  deploy-macos-arm64:
     runs-on: macos-14
     steps:
      - name: Checkout Repository
@@ -94,7 +115,13 @@ jobs:
           vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c macos-arm64
           vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-arm64
           vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-arm64 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
-  
+     - name: Upload Artifacts
+       uses: actions/upload-artifact@v4
+       with:
+           name: macos-arm64-build
+           path: ./Releases
+           retention-days: 1
+
   upload-artiface:
     runs-on: ubuntu-latest
     needs: [deploy-win,deploy-linux,deploy-macos-intel,deploy-macos-m1]
