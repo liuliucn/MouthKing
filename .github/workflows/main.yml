@@ -8,19 +8,120 @@ permissions:
   contents: write
 
 jobs:
+  deploy-win:
+    runs-on: windows-latest
+    steps:
+     - name: Checkout Repository
+       uses: actions/checkout@v4
+     - name: Get Version from Project File
+       id: get-version
+       shell: bash
+       run: echo "version=$(grep -oE '<Version>[^<]+' MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj | sed 's/<Version>//')" >> $GITHUB_OUTPUT
+     - name: Install .NET
+       uses: actions/setup-dotnet@v4
+       with:
+         dotnet-version: 9.0.x
+     - name: Publish Application
+       run: dotnet publish MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj -c Release -o publish -r win-x64
+     - name: Create Velopack Release
+       run: |
+          dotnet tool install -g vpk
+          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c win 
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish -c win 
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c win  --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
+  deploy-linux:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout Repository
+       uses: actions/checkout@v4
+     - name: Setup NativeAOT pre-requisites
+       run: sudo apt-get install clang zlib1g-dev libkrb5-dev --assume-yes
+     - name: Get Version from Project File
+       id: get-version
+       shell: bash
+       run: echo "version=$(grep -oE '<Version>[^<]+' MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj | sed 's/<Version>//')" >> $GITHUB_OUTPUT
+     - name: Install .NET
+       uses: actions/setup-dotnet@v4
+       with:
+         dotnet-version: 9.0.x
+     - name: Publish Application
+       run: dotnet publish MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj -c Release -o publish -r linux-x64
+     - name: Create Velopack Release
+       run: |
+          dotnet tool install -g vpk
+          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c linux 
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.ico -v ${{ steps.get-version.outputs.version }} -p publish -c linux 
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c linux --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
+  deploy-macos-intel:
+    runs-on: macos-13
+    steps:
+     - name: Checkout Repository
+       uses: actions/checkout@v4
+     - name: Get Version from Project File
+       id: get-version
+       shell: bash
+       run: echo "version=$(grep -oE '<Version>[^<]+' MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj | sed 's/<Version>//')" >> $GITHUB_OUTPUT
+     - name: Install .NET
+       uses: actions/setup-dotnet@v4
+       with:
+         dotnet-version: 9.0.x
+     - name: Publish Application
+       run: dotnet publish MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj -c Release -o publish -r osx-x64
+     - name: Create Velopack Release
+       run: |
+          dotnet tool install -g vpk
+          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c macos-x64
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-x64
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-x64 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
+  deploy-macos-m1:
+    runs-on: macos-14
+    steps:
+     - name: Checkout Repository
+       uses: actions/checkout@v4
+     - name: Get Version from Project File
+       id: get-version
+       shell: bash
+       run: echo "version=$(grep -oE '<Version>[^<]+' MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj | sed 's/<Version>//')" >> $GITHUB_OUTPUT
+     - name: Install .NET
+       uses: actions/setup-dotnet@v4
+       with:
+         dotnet-version: 9.0.x
+     - name: Publish Application
+       run: dotnet publish MouthKing.UI.Desktop/MouthKing.UI.Desktop.csproj -c Release -o publish -r osx-arm64
+     - name: Create Velopack Release
+       run: |
+          dotnet tool install -g vpk
+          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN  }} -c macos-arm64
+          vpk pack -u MouthKing --packTitle MouthKing --icon logo.icns -v ${{ steps.get-version.outputs.version }} -p publish -c macos-arm64
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --merge -c macos-arm64 --releaseName "MouthKing ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }} --token ${{ secrets.GITHUB_TOKEN  }}
   
   upload-artiface:
     runs-on: ubuntu-latest
+    needs: [deploy-win,deploy-linux,deploy-macos-intel,deploy-macos-m1]
     steps:
     - name: create gitlab release
       id: create_release
       run: |
         json=$(curl -X POST --header 'Content-Type: application/json;charset=UTF-8' 'https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases' \
-             -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":"${{github.ref_name}}","name":"${{github.ref_name}}","body":"${{github.ref_name}}","target_commitish":"master"}')
-
-    - uses: actions/checkout@v2
+             -d '{"access_token":"${{ secrets.GITLAB_API_TOKEN }}","tag_name":" ${{ steps.get-version.outputs.version }}","name":" ${{ steps.get-version.outputs.version }}","body":"","target_commitish":"master"}')
+        echo "$json"
+        echo "::set-output name=json::$json"
     - uses: actions/download-artifact@v4.1.8
+    - name: Finding files
+      id: finding-files        
+      run: |
+        {
+          echo 'FILELIST<<EOF'
+          find . -name '*.*' -print 
+          echo EOF
+        } >> "$GITHUB_ENV"
     - name: upload artifacts to gitlab
       run: |
         echo "${{fromJson(steps.create_release.outputs.json).id}}"
-         
+        release_id=${{fromJson(steps.create_release.outputs.json).id}}
+        release_url="https://gitee.com/api/v5/repos/tsdyy/mouth-king/releases/$release_id/attach_files"
+        ls
+        for i in $FILELIST; do
+          echo "Do something with file ${i}"
+        done
+        
