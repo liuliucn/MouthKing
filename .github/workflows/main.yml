@@ -137,7 +137,7 @@ jobs:
       run: |
         {
           echo 'FILELIST<<EOF'
-          find . -type f -not -name 'assets*' -printf "%f\n" | sort
+          find . -type f -not -name 'assets*' -printf "%f\t%p\n" | sort -k1,1 | cut -f2-
           echo EOF
         } >> "$GITHUB_ENV"
     - name: upload artifacts to gitlab
