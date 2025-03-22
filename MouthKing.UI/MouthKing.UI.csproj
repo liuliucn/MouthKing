@@ -17,13 +17,11 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
-    <PackageReference Include="NetSparkleUpdater.SparkleUpdater" Version="3.0.1" />
     <PackageReference Include="SharpHook" Version="5.3.8" />
     <PackageReference Include="Velopack" Version="0.0.1053" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MouthKing.Core\MouthKing.Core.csproj" />
-    <ProjectReference Include="..\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.csproj" />
   </ItemGroup>
 </Project>

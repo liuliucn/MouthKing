@@ -1,13 +1,8 @@
 ﻿using Avalonia.Controls;
-using NetSparkleUpdater.Enums;
-using NetSparkleUpdater.SignatureVerifiers;
-using NetSparkleUpdater;
 using System;
 using Velopack.Sources;
 using Velopack;
 using System.Threading.Tasks;
-using NetSparkleUpdater.UI.Avalonia.ViewModels;
-using NetSparkleUpdater.UI.Avalonia;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Linq;
@@ -18,29 +13,12 @@ namespace MouthKing.UI.Views;
 
 public partial class MainWindow : Window
 {
-    private SparkleUpdater _sparkle;
 
     public MainWindow()
     {
         InitializeComponent();
 
-        //var appcastUrl = "https://gitee.com/tsdyy/mouth-king/raw/files/appcast-windows.xml";
-        //if (OperatingSystem.IsMacOS())
-        //    appcastUrl = "https://gitee.com/tsdyy/mouth-king/raw/files/appcast-macos.xml";
-        //else if (OperatingSystem.IsLinux())
-        //    appcastUrl = "https://gitee.com/tsdyy/mouth-king/raw/files/appcast-linux.xml";
-        //// on your main thread...
-        //_sparkle = new CustomSparkleUpdater(appcastUrl, new Ed25519Checker(SecurityMode.Unsafe, ""))
-        //{
-        //    UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon), // or null, or choose some other UI factory, or build your own IUIFactory implementation!
-        //    RelaunchAfterUpdate = false, // set to true if needed
-        //};
-        //_sparkle.StartLoop(true, true); // will auto-check for updates
-
-
         CheckForUpdates();
-
-
     }
 
     private async Task CheckForUpdates()
@@ -51,23 +29,24 @@ public partial class MainWindow : Window
             var newVersion = await mgr.CheckForUpdatesAsync().ConfigureAwait(true);
             if (newVersion != null)
             {
-                var viewModel = new UpdateAvailableWindowViewModel();
-                var window = new UpdateAvailableWindow(viewModel, null);
+                updateAvailableView.IsVisible = true;
+                //var viewModel = new UpdateAvailableWindowViewModel();
+                //var window = new UpdateAvailableWindow(viewModel, null);
 
-                var releaseNotesHtml = newVersion.TargetFullRelease.NotesHTML;
-                // show a window here with the release notes
-                // possibly ask the user if they wish to update or not?
-                // eg. new ReleaseNotesHtmlWindow(releaseNotesHtml).Show();
-                viewModel.InfoText = newVersion.TargetFullRelease.Version + "," + releaseNotesHtml;
-                window.Show();
+                //var releaseNotesHtml = newVersion.TargetFullRelease.NotesHTML;
+                //// show a window here with the release notes
+                //// possibly ask the user if they wish to update or not?
+                //// eg. new ReleaseNotesHtmlWindow(releaseNotesHtml).Show();
+                //viewModel.InfoText = newVersion.TargetFullRelease.Version + "," + releaseNotesHtml;
+                //window.Show();
             }
         }
         catch (Exception ex)
         {
-            var viewModel = new UpdateAvailableWindowViewModel();
-            viewModel.InfoText = $"An error occurred while checking for updates: {ex.Message}";
-            var window = new UpdateAvailableWindow(viewModel, null);
-            window.Show();
+            //var viewModel = new UpdateAvailableWindowViewModel();
+            //viewModel.InfoText = $"An error occurred while checking for updates: {ex.Message}";
+            //var window = new UpdateAvailableWindow(viewModel, null);
+            //window.Show();
         }
 
     }
