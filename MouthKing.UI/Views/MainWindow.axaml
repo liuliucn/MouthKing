@@ -8,8 +8,7 @@
 		Width="300"
         x:Class="MouthKing.UI.Views.MainWindow"
         Icon="/Assets/logo.ico"
-		SizeToContent="WidthAndHeight"
-        Title="嘴强">
+		SizeToContent="WidthAndHeight">
 	<StackPanel>
 		<views:MainView/>
 		<views:UpdateAvailableView Name="updateAvailableView" IsVisible="False"/>

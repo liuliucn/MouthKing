@@ -8,6 +8,8 @@ using System.Text.Json;
 using System.Linq;
 using NuGet.Versioning;
 using System.Collections.Generic;
+using Avalonia;
+using System.Diagnostics;
 
 namespace MouthKing.UI.Views;
 
@@ -16,39 +18,12 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        var assemblyName = Process.GetCurrentProcess().MainModule.FileName;
+        var fvi = FileVersionInfo.GetVersionInfo(assemblyName);
+         
+        this.Title = "嘴强 v" + fvi.ProductVersion;
+
         InitializeComponent();
-
-        CheckForUpdates();
-    }
-
-    private async Task CheckForUpdates()
-    {
-        try
-        {
-            var mgr = new UpdateManager(new GiteeSource("https://gitee.com/tsdyy/mouth-king", null, false));
-            var newVersion = await mgr.CheckForUpdatesAsync().ConfigureAwait(true);
-            if (newVersion != null)
-            {
-                updateAvailableView.IsVisible = true;
-                //var viewModel = new UpdateAvailableWindowViewModel();
-                //var window = new UpdateAvailableWindow(viewModel, null);
-
-                //var releaseNotesHtml = newVersion.TargetFullRelease.NotesHTML;
-                //// show a window here with the release notes
-                //// possibly ask the user if they wish to update or not?
-                //// eg. new ReleaseNotesHtmlWindow(releaseNotesHtml).Show();
-                //viewModel.InfoText = newVersion.TargetFullRelease.Version + "," + releaseNotesHtml;
-                //window.Show();
-            }
-        }
-        catch (Exception ex)
-        {
-            //var viewModel = new UpdateAvailableWindowViewModel();
-            //viewModel.InfoText = $"An error occurred while checking for updates: {ex.Message}";
-            //var window = new UpdateAvailableWindow(viewModel, null);
-            //window.Show();
-        }
-
     }
 }
 
