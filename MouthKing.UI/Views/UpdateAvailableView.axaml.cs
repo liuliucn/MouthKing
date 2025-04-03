@@ -18,12 +18,14 @@ public partial class UpdateAvailableView : UserControl
 
     }
 
+    private UpdateManager updateManager = new UpdateManager(new GiteeSource("https://gitee.com/tsdyy/mouth-king", null, false));
+    private UpdateInfo? newVersion;
+
     private async Task CheckForUpdates()
     {
         try
         {
-            var mgr = new UpdateManager(new GiteeSource("https://gitee.com/tsdyy/mouth-king", null, false));
-            var newVersion = await mgr.CheckForUpdatesAsync().ConfigureAwait(true);
+             newVersion = await updateManager.CheckForUpdatesAsync().ConfigureAwait(true);
             if (newVersion != null)
             {
                 this.IsVisible = true;
@@ -44,21 +46,16 @@ public partial class UpdateAvailableView : UserControl
 
     private async void Button_Click_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        var mgr = new UpdateManager(new GiteeSource("https://gitee.com/tsdyy/mouth-king", null, false));
-        var newVersion = await mgr.CheckForUpdatesAsync();
-        if (newVersion == null)
-            return; // no update available
-
         try
         {
             // download new version
-            await mgr.DownloadUpdatesAsync(newVersion, i =>
+            await updateManager.DownloadUpdatesAsync(newVersion, i =>
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     // update progress bar
                     text.Content = $"下载中: {i}%";
-                    if (i == 100)
+                    if (i >= 99)
                     {
                         text.Content = "下载完成，正在重启应用";
                     }
@@ -66,7 +63,7 @@ public partial class UpdateAvailableView : UserControl
             });
 
             // install new version and restart app
-            mgr.ApplyUpdatesAndRestart(newVersion);
+            updateManager.ApplyUpdatesAndRestart(newVersion);
         }
         catch (System.Exception ex)
         {

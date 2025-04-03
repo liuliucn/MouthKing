@@ -10,8 +10,8 @@
 						Spacing="10">
 		<Label Name="text">发现当前有新版本可用</Label>
 		<StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-			<Button Click="Button_Click_1">更 新</Button>
-			<Button Click="Button_Click">取 消</Button>
+			<Button Click="Button_Click_1" Name="btn_1">更 新</Button>
+			<Button Click="Button_Click" Name="btn_1">取 消</Button>
 		</StackPanel>
 	</StackPanel>
 </UserControl>
